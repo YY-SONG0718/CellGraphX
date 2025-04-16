@@ -14,13 +14,13 @@ def main():
     config = Config()
 
     # Initialize the model
-    model = model_builder(config=config)
+    model = model_builder(config=config.model)
 
     # Prepare the dataset and dataloaders
-    data = data_loader(config=config)
+    data = data_loader(config=config.data)
 
     # Optimizer and learning rate scheduler
-    optimizer = build_optimizer(model, config)
+    optimizer = build_optimizer(model, config.training)
 
     # Scheduler (optional, for learning rate decay)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)

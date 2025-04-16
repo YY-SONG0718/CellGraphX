@@ -21,12 +21,12 @@ class Trainer:
     ):
         self.model = model.to(device)
         self.data = data.to(device)
-        self.optimizer = build_optimizer(config)
+        self.optimizer = build_optimizer(config.training)
         self.scheduler = scheduler
         self.device = device
         self.edge_weight_dict = edge_weight_dict
         self.config = config
-        self.loss_fn = get_loss_fn(config)
+        self.loss_fn = get_loss_fn(config.loss)
         self.log_dir = config.log_dir
 
         # Logging setup

@@ -1,12 +1,9 @@
-import os.path as osp
-
 import torch
 import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch.utils.tensorboard import SummaryWriter
 from torch_geometric.datasets import DBLP
 from torch_geometric.nn import HGTConv, Linear
-from torch_geometric.utils import train_test_split_edges
 from torch_geometric.nn import HeteroConv, GCNConv, GraphConv
 
 
@@ -17,10 +14,6 @@ random.seed(0)
 
 writer = SummaryWriter()
 
-import logging
-import sys
-import pickle
-import pandas as pd
 import numpy as np
 
 
@@ -28,8 +21,8 @@ np.random.seed(0)
 
 
 def model_builder(config):
-    if config.model.name == "graphconv":
-        return HeteroGNN(**config.model.params)
+    if config.model_name == "graphconv":
+        return HeteroGNN(config.hidden_channels, config.out_channels, config.num_layers)
 
 
 class HeteroGNN(torch.nn.Module):
