@@ -2,9 +2,7 @@
 
 import torch
 import torch.optim as optim
-from torch.utils.data import DataLoader
 from training.trainer import Trainer
-from training.losses import get_loss
 from configs.config import Config
 from models.model import model_builder
 from data.data_loader import data_loader
