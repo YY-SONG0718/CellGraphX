@@ -2,6 +2,12 @@ import torch
 import pandas as pd
 import numpy as np
 import pickle
+import os
+
+import warnings
+from torch.serialization import SourceChangeWarning
+
+warnings.filterwarnings("ignore", category=SourceChangeWarning)
 
 
 def read_pt(data_path):
@@ -73,9 +79,13 @@ def load_species_origin_index_mappings(ct_index_mapping):
 
 
 def data_loader(config):
-    data_orig = read_pt(data_path=f"mtg_all_sp_wilcox_data_with_og_ct_name.pt")
+    # print(os.getcwd())
+    data_orig = read_pt(
+        data_path=f"./data/mtg_all_sp_wilcox_heterodata_only_gene_cell_edges.pt"
+        # this will be run from cwd CIGLOW so get the paths right
+    )
     species_origin = load_species_origin_index_mappings(
-        "mtg_all_sp_wilcox_data_with_og_no_cj_ct_mapping.pkl"
+        "./data/mtg_all_sp_wilcox_data_ct_mapping.pkl"
     )
     split = {
         "train_idx": np.array(
@@ -105,4 +115,5 @@ def data_loader(config):
     }
 
     data = split_train_val_test(data_orig, split)
+    print(f"This is the HeteroData you are working with:\n{data}")
     return data

@@ -40,10 +40,10 @@ class HeteroGNN(torch.nn.Module):
                         -1, hidden_channels
                     ),
                     # Self-loop edges for genes and cell types
-                    ("gene", "self_loop", "gene"): GraphConv(-1, hidden_channels),
-                    ("cell_type", "self_loop", "cell_type"): GraphConv(
-                        -1, hidden_channels
-                    ),
+                    # ("gene", "self_loop", "gene"): GraphConv(-1, hidden_channels),
+                    # ("cell_type", "self_loop", "cell_type"): GraphConv(
+                    #    -1, hidden_channels
+                    # ),
                 },
                 aggr="sum",
             )

@@ -14,9 +14,11 @@ def main():
     config = Config()
 
     # Initialize the model
+    print("Initializing model...", flush=True)
     model = model_builder(config=config.model)
 
     # Prepare the dataset and dataloaders
+    print("Loading data...", flush=True)
     data = data_loader(config=config.data)
 
     # Optimizer and learning rate scheduler
@@ -26,6 +28,7 @@ def main():
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
 
     # Initialize the trainer with the model, data, optimizer, and config
+    print("Initializing trainer...", flush=True)
     trainer = Trainer(
         model=model,
         data=data,
@@ -35,7 +38,10 @@ def main():
     )
 
     # Start the training
-    trainer.train(epochs=config.num_epochs)
+    print("Starting training...", flush=True)
+    trainer.train(epochs=config.training.num_epochs)
+
+    print("Training completed with model saved.", flush=True)
 
 
 if __name__ == "__main__":

@@ -12,5 +12,5 @@ random.seed(0)
 
 
 def build_optimizer(model, config):
-    if config.optimizer.name == "adam":
-        return torch.optim.Adam(model.parameters(), **config.optimizer.params)
+    if config.optimizer["name"] == "adam":
+        return torch.optim.Adam(model.parameters(), **config.optimizer["params"])

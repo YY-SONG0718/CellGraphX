@@ -12,18 +12,17 @@ class Trainer:
         self,
         model,
         data,
-        optimizer,
         config,
         scheduler=None,
-        device="cuda",
+        device="cpu",
         edge_weight_dict=None,
         log_dir="./logs",
     ):
         self.model = model.to(device)
         self.data = data.to(device)
-        self.optimizer = build_optimizer(config.training)
+        self.optimizer = build_optimizer(model, config.training)
         self.scheduler = scheduler
-        self.device = device
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.edge_weight_dict = edge_weight_dict
         self.config = config
         self.loss_fn = get_loss_fn(config.loss)
@@ -89,7 +88,7 @@ class Trainer:
         pred = out.argmax(dim=-1)
 
         accs = []
-        for split in ["train_mask", "validation_mask", "test_mask"]:
+        for split in ["train_mask", "val_mask", "test_mask"]:
             mask = self.data["cell_type"][split]
             acc = (pred[mask] == self.data["cell_type"].y[mask]).sum() / mask.sum()
             accs.append(float(acc))

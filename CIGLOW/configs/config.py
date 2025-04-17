@@ -1,7 +1,7 @@
 class ModelConfig:
     model_name = "graphconv"
     hidden_channels = 64
-    out_channels = 21
+    out_channels = 24
     num_layers = 2
 
 
@@ -20,7 +20,7 @@ class DataConfig:
     auth = ("test", "666666")
     output_dir = "all_sp_heterodata_only_gene_cell_edges"
     edge_threshold = 3.0  # minimum avg_log2fc for wilcox marker genes to keep
-    add_self_loops = True
+    add_self_loops = False
     use_esm_embeddings = False  # example option
     val_species = "M.mulatta"
     test_species = "G.gorilla"
