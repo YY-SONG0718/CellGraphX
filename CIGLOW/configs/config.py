@@ -22,6 +22,8 @@ class DataConfig:
     edge_threshold = 3.0  # minimum avg_log2fc for wilcox marker genes to keep
     add_self_loops = False
     use_esm_embeddings = False  # example option
+    heterodata_pt = "mtg_all_sp_wilcox_data_with_og_ct_name.pt"
+    species_origin_index = "mtg_all_sp_wilcox_data_with_og.pkl"
     val_species = "M.mulatta"
     test_species = "G.gorilla"
 

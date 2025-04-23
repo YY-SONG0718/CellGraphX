@@ -9,6 +9,19 @@ from torch.serialization import SourceChangeWarning
 
 warnings.filterwarnings("ignore", category=SourceChangeWarning)
 
+from pathlib import Path
+
+# This refers to the data/ folder
+DATA_DIR = Path(__file__).resolve().parent
+
+# point the location of data
+
+
+def load_data():
+    with open(input_path, "r") as f:
+        # read the file
+        pass
+
 
 def read_pt(data_path):
     data = torch.load(data_path)
@@ -81,11 +94,13 @@ def load_species_origin_index_mappings(ct_index_mapping):
 def data_loader(config):
     # print(os.getcwd())
     data_orig = read_pt(
-        data_path=f"./data/mtg_all_sp_wilcox_heterodata_only_gene_cell_edges.pt"
-        # this will be run from cwd CIGLOW so get the paths right
+        data_path=DATA_DIR
+        / config.heterodata_pt
+        # this is the heterodata pt file
+        # this will be run from cwd CIGLOW so the paths has "/data/"
     )
     species_origin = load_species_origin_index_mappings(
-        "./data/mtg_all_sp_wilcox_data_ct_mapping.pkl"
+        ct_index_mapping=DATA_DIR / config.species_origin_index
     )
     split = {
         "train_idx": np.array(

@@ -39,6 +39,12 @@ class HeteroGNN(torch.nn.Module):
                     ("cell_type", "rev_is_wilcox_marker_of", "gene"): GraphConv(
                         -1, hidden_channels
                     ),
+                    ("gene", "is_in", "orthologous_group"): GraphConv(
+                        -1, hidden_channels
+                    ),
+                    ("orthologous_group", "rev_is_in", "gene"): GraphConv(
+                        -1, hidden_channels
+                    ),
                     # Self-loop edges for genes and cell types
                     # ("gene", "self_loop", "gene"): GraphConv(-1, hidden_channels),
                     # ("cell_type", "self_loop", "cell_type"): GraphConv(

@@ -5,9 +5,9 @@ from torch_geometric.data import HeteroData
 from torch_geometric.utils import add_self_loops
 from neo4j import GraphDatabase
 
-from data.generate_input_from_KG import load_edge, load_node
+from data.load_node_edge import load_edge, load_node
 from data.feature_encoders import IdentityEncoder
-from configs.config import Config  # centralized config
+from CIGLOW.configs.config import Config  # centralized config
 
 
 class HeteroDataBuilder:
