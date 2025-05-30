@@ -4,6 +4,7 @@ import pickle
 from torch_geometric.data import HeteroData
 from torch_geometric.utils import add_self_loops
 from neo4j import GraphDatabase
+from pathlib import Path
 
 from data.load_node_edge import load_edge, load_node
 from data.feature_encoders import IdentityEncoder
@@ -15,12 +16,15 @@ class HeteroDataBuilder:
         self.config = config
         self.driver = GraphDatabase.driver(config.uri, auth=config.auth)
         self.driver.verify_connectivity()
-        # the output dir where all data is stored should be here, in a separate data dir with the cellgraphx codes
-        os.makedirs(config.output_dir, exist_ok=True)
+
+        # the output dir where all data generated with this script should be here, in a separate data dir with the cellgraphx codes
+
+        self.data_outdir = Path(config.data.output_dir)
+        self.data_outdir.mkdir(parents=True, exist_ok=True)
 
     def _save_pickle(self, obj, name):
         # already prepend the output dir here
-        path = os.path.join(self.config.output_dir, name)
+        path = self.data_outdir / name
         with open(path, "wb") as f:
             pickle.dump(obj, f)
 
@@ -108,7 +112,7 @@ class HeteroDataBuilder:
     def save(
         self, data: HeteroData, filename="mtg_all_sp_wilcox_heterodata_from_KG.pt"
     ):
-        path = os.path.join(self.config.output_dir, filename)
+        path = self.data_outdir / filename
         torch.save(data, path)
 
 

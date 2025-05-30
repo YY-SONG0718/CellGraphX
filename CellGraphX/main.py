@@ -11,8 +11,9 @@ from training.optimizer import build_optimizer
 
 def main():
     # Load configuration
-    config = Config()
+    print("Loading configuration...", flush=True)
 
+    config = Config()
     # Initialize the model
     print("Initializing model...", flush=True)
     model = model_builder(config=config.model)
@@ -26,8 +27,8 @@ def main():
 
     # Scheduler (optional, for learning rate decay)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-
     # Initialize the trainer with the model, data, optimizer, and config
+
     print("Initializing trainer...", flush=True)
     trainer = Trainer(
         model=model,
