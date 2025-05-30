@@ -17,12 +17,6 @@ DATA_DIR = Path(__file__).resolve().parent
 # point the location of data
 
 
-def load_data():
-    with open(input_path, "r") as f:
-        # read the file
-        pass
-
-
 def read_pt(data_path):
     data = torch.load(data_path)
     return data

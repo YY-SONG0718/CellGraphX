@@ -1,11 +1,6 @@
-## NEBULA: Network Embedding for Biological Unification across Lineages
-## Network-based Edge-weighted Biological Unification across species with Learning Algorithms (?)
+# CellGraphX
 
-## GRAVITY: Graph Representation, Analysis, Visualization and Integration of Transcriptomics data Across species. 
-# GLOWIN: Graph Learning for Orthologous Weighting and INtegration
-
-# SIGMA Species Integration through Graph-based Modeling of Associations
-
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/license/mit/)
 
 - Cross-species Integration: the method is aimed for cross-species integration analysis
 - Graph Learning: the method is based on heterogeneous graph neural networks
@@ -29,6 +24,12 @@ The gene-orthologous group edges are used to connect genes that are orthologous 
 Originally, the heterogeneous graph is built from querying a GeneSpectraKG Neo4j database and parsing the results to PyG HeteroData. However, Yuyao is also working on more traditional ways to contract a graph from a tabular data.
 
 ## Running
+
+First generate the heterogeneous graph data from a GeneSpectraKG Neo4j database. You can do this by running the following command:
+
+```bash
+python data/generate_input_from_KG_script.py
+```
 
 Run CellGraphX with the following command:
 

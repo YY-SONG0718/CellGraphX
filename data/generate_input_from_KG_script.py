@@ -15,9 +15,11 @@ class HeteroDataBuilder:
         self.config = config
         self.driver = GraphDatabase.driver(config.uri, auth=config.auth)
         self.driver.verify_connectivity()
+        # the output dir where all data is stored should be here, in a separate data dir with the cellgraphx codes
         os.makedirs(config.output_dir, exist_ok=True)
 
     def _save_pickle(self, obj, name):
+        # already prepend the output dir here
         path = os.path.join(self.config.output_dir, name)
         with open(path, "wb") as f:
             pickle.dump(obj, f)
@@ -77,8 +79,11 @@ class HeteroDataBuilder:
 
         # build heterodata
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # here the cell type embed is just an identity matrix, but it can be replaced with any other embedding
         data["cell_type"].x = torch.eye(len(ct_mapping), device=device)
         data["cell_type"].y = ct_y
+
+        # here the gene embed is also an identity matrix, but it can (will) be replaced with other embedding
         data["gene"].x = torch.eye(len(gene_mapping), device=device)
 
         data["gene", "is_wilcox_marker_of", "cell_type"].edge_index = edge_index
@@ -89,7 +94,7 @@ class HeteroDataBuilder:
             edge_weights_rev
         )
 
-        # add self-loops
+        # if add self-loops
         if self.config.add_self_loops:
             for node_type in ["cell_type", "gene"]:
                 num_nodes = data[node_type].x.size(0)
@@ -100,7 +105,9 @@ class HeteroDataBuilder:
 
         return data
 
-    def save(self, data: HeteroData, filename="mtg_all_sp_wilcox_heterodata.pt"):
+    def save(
+        self, data: HeteroData, filename="mtg_all_sp_wilcox_heterodata_from_KG.pt"
+    ):
         path = os.path.join(self.config.output_dir, filename)
         torch.save(data, path)
 
@@ -110,3 +117,6 @@ if __name__ == "__main__":
     builder = HeteroDataBuilder(config)
     hetero_data = builder.build()
     builder.save(hetero_data)
+
+
+# Yuyao: didn't run this script, but it should work
