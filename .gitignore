@@ -1,3 +1,7 @@
+# runs
+
+runs/
+
 # data
 *.pkl
 *.pt
