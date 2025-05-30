@@ -97,7 +97,7 @@ def data_loader(config):
         data_path=DATA_DIR
         / config.heterodata_pt
         # this is the heterodata pt file
-        # this will be run from cwd CIGLOW so the paths has "/data/"
+        # this will be run from cwd CellGraphX so the paths has "/data/"
     )
     species_origin = load_species_origin_index_mappings(
         ct_index_mapping=DATA_DIR / config.species_origin_index

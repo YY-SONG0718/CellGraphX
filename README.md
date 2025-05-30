@@ -1,6 +1,11 @@
+## NEBULA: Network Embedding for Biological Unification across Lineages
+## Network-based Edge-weighted Biological Unification across species with Learning Algorithms (?)
 
-## CIGLOW: Cross-species Integration with Graph Learning Over Weighted edges
-CIGLOW is to be pronunced "CI-glow" and is short for "Cross-species Integration with Graph Learning Over Weighted edges"
+## GRAVITY: Graph Representation, Analysis, Visualization and Integration of Transcriptomics data Across species. 
+# GLOWIN: Graph Learning for Orthologous Weighting and INtegration
+
+# SIGMA Species Integration through Graph-based Modeling of Associations
+
 
 - Cross-species Integration: the method is aimed for cross-species integration analysis
 - Graph Learning: the method is based on heterogeneous graph neural networks
@@ -8,7 +13,7 @@ CIGLOW is to be pronunced "CI-glow" and is short for "Cross-species Integration 
 
 ## Overview
 
-CIGLOW is a method for cross-species integration analysis. It uses a heterogeneous graph neural network to learn the relationships between genes and cell types across different species.
+CellGraphX is a method for cross-species integration analysis. It uses a heterogeneous graph neural network to learn the relationships between genes and cell types across different species.
 
 The heterogeneous graph currently contains 3 types of nodes: 
 - gene
@@ -25,10 +30,10 @@ Originally, the heterogeneous graph is built from querying a GeneSpectraKG Neo4j
 
 ## Running
 
-Run CIGLOW with the following command:
+Run CellGraphX with the following command:
 
 ```bash
-python CIGLOW/main.py 
+python CellGraphX/main.py 
 ```
 
 ## LICENSE

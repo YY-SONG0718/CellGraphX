@@ -7,7 +7,7 @@ from neo4j import GraphDatabase
 
 from data.load_node_edge import load_edge, load_node
 from data.feature_encoders import IdentityEncoder
-from CIGLOW.configs.config import Config  # centralized config
+from CellGraphX.configs.config import Config  # centralized config
 
 
 class HeteroDataBuilder:
