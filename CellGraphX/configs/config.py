@@ -1,8 +1,8 @@
 class ModelConfig:
     model_name = "graphconv"
     hidden_channels = 64
-    out_channels = 24
-    num_layers = 2
+    out_channels = 24 # equals to number of cell type classes
+    num_layers = 2 # number of hops for two cell type nodes to reach each other
 
 
 class LossConfig:
