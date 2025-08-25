@@ -65,7 +65,7 @@ class HeteroGNN(torch.nn.Module):
             for relation, subconv in conv.convs.items():
                 if (
                     isinstance(subconv, GraphConv)
-                    and edge_weight_dict
+                    and edge_weight_dict  # check that the edge type in graphconv is the same with those speified in edge_weight_dict
                     and relation in edge_weight_dict
                 ):
                     edge_weight_inputs[relation] = edge_weight_dict[relation]
@@ -75,4 +75,7 @@ class HeteroGNN(torch.nn.Module):
             # apply the HeteroConv layer with edge weights if available
             x_dict = conv(x_dict, edge_index_dict, edge_weight_dict=edge_weight_inputs)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
-        return self.lin(x_dict["cell_type"])
+        return self.lin(
+            x_dict["cell_type"]
+        )  # note that the cross-entropy loss need raw logits - so we give it a simple linear layer
+        # at inference time, I can either use argmax if i only care about the classes, or softmax if i care about probabilities

@@ -126,3 +126,20 @@ def data_loader(config):
     data = split_train_val_test(data_orig, split)
     print(f"This is the HeteroData you are working with:\n{data}")
     return data
+
+
+def edge_weight_dict_loader(data):
+    edge_weight_dict = {
+        ("gene", "is_wilcox_marker_of", "cell_type"): (
+            data[("gene", "is_wilcox_marker_of", "cell_type")]["edge_weights"]
+            if ("gene", "is_wilcox_marker_of", "cell_type") in data.edge_types
+            else None
+        ),
+        ("cell_type", "rev_is_wilcox_marker_of", "gene"): (
+            data[("cell_type", "rev_is_wilcox_marker_of", "gene")]["edge_weights"]
+            if ("cell_type", "rev_is_wilcox_marker_of", "gene") in data.edge_types
+            else None
+        ),
+    }
+
+    return edge_weight_dict
