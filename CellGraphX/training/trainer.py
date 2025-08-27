@@ -67,7 +67,7 @@ class Trainer:
         self.model.train()
         self.optimizer.zero_grad()
 
-        out = self.model(self.data.x_dict, self.data.edge_index_dict)
+        out = self.model(self.data.x_dict, self.data.edge_index_dict, self.edge_weight_dict)
         mask = self.data["cell_type"].train_mask
         loss = self.loss_fn(
             out[mask], self.data["cell_type"].y[mask]
@@ -85,7 +85,7 @@ class Trainer:
     def _evaluate(self):
         self.model.eval()
         out = self.model(self.data.x_dict, self.data.edge_index_dict)
-        pred = out.argmax(dim=-1)
+        pred = out.argmax(dim=-1) # use argmax to get the predicted class
 
         accs = []
         for split in ["train_mask", "val_mask", "test_mask"]:

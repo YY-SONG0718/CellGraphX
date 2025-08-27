@@ -73,16 +73,24 @@ def get_split(species_val_now, species_test_now, species_origin):
     return split
 
 
-def load_species_origin_index_mappings(ct_index_mapping):
+def load_species_origin_index(species_origin_index):
 
-    with open(ct_index_mapping, "rb") as f:
-        ct_sub_mapping = pickle.load(f)
+    with open(species_origin_index, "rb") as f:
+        species_origin_index_obj = pickle.load(f)
 
     species_origin = dict(
-        pd.Series(list(ct_sub_mapping.keys())).replace(".*_", "", regex=True)
+        pd.Series(list(species_origin_index_obj.keys())).replace(".*_", "", regex=True)
     )
 
     return species_origin
+
+
+def load_cell_type_index_mapping(cell_type_index_mapping):
+
+    with open(cell_type_index_mapping, "rb") as f:
+        cell_type_index_mapping_obj = pickle.load(f)
+
+    return cell_type_index_mapping_obj
 
 
 def data_loader(config):
@@ -93,8 +101,8 @@ def data_loader(config):
         # this is the heterodata pt file
         # this will be run from cwd CellGraphX so the paths has "/data/"
     )
-    species_origin = load_species_origin_index_mappings(
-        ct_index_mapping=DATA_DIR / config.species_origin_index
+    species_origin = load_species_origin_index(
+        cell_type_index_mapping=DATA_DIR / config.species_origin_index
     )
     split = {
         "train_idx": np.array(
@@ -124,11 +132,20 @@ def data_loader(config):
     }
 
     data = split_train_val_test(data_orig, split)
+
+    # add useful metadata to the data object
+    data.species_origin_index = species_origin
+    data.cell_type_index_mapping = load_cell_type_index_mapping(
+        cell_type_index_mapping=DATA_DIR / config.cell_type_index_mapping
+    )
+
     print(f"This is the HeteroData you are working with:\n{data}")
     return data
 
 
 def edge_weight_dict_loader(data):
+    # prepare the edge weight dict for the model if needed
+
     edge_weight_dict = {
         ("gene", "is_wilcox_marker_of", "cell_type"): (
             data[("gene", "is_wilcox_marker_of", "cell_type")]["edge_weights"]
