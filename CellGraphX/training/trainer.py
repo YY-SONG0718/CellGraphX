@@ -37,7 +37,7 @@ class Trainer:
         self.edge_weight_dict = edge_weight_dict
         self.config = config
         self.loss_fn = loss_fn if loss_fn is not None else get_loss_fn(config.loss)
-        self.log_dir = config.log_dir
+
 
         # Logging setup
         os.makedirs(log_dir, exist_ok=True)

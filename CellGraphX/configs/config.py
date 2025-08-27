@@ -12,7 +12,7 @@ class LossConfig:
 
 class TrainingConfig:
     batch_size = 32
-    num_epochs = 10
+    num_epochs = 100
     optimizer = {"name": "adam", "params": {"lr": 1e-3, "weight_decay": 1e-5}}
 
 

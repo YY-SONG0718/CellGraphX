@@ -45,6 +45,7 @@ def objective(trial):
         scheduler=scheduler,
         config=config,
         edge_weight_dict=edge_weight_dict,
+        log_dir=f"./logs/optuna_trial_{trial.number}",
         # optimizer, loss func, logdir build from config
     )
 
