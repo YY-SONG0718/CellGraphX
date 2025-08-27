@@ -182,4 +182,5 @@ cython_debug/
 .pypirc
 
 
+*.db
 .\vscode

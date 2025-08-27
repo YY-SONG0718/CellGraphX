@@ -19,6 +19,8 @@ def objective(trial):
     lr = trial.suggest_float("lr", 1e-4, 1e-2, log=True)
     weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-2, log=True)
     # initialize the model manually because we changed the hyper params
+
+    print("Initializing model...", flush=True)
     model = HeteroGNN(
         hidden_channels=hidden_channels,
         out_channels=config.model.out_channels,
@@ -29,12 +31,13 @@ def objective(trial):
 
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
     # Initialize the trainer with the model, data, optimizer, and config
+    print("Loading data...", flush=True)
 
     data = data_loader(config=config.data)
     edge_weight_dict = (
         edge_weight_dict_loader(data) if config.model.edge_weight else None
     )
-
+    print("Initializing trainer...", flush=True)
     trainer = Trainer(
         model=model,
         data=data,
@@ -45,20 +48,31 @@ def objective(trial):
         # optimizer, loss func, logdir build from config
     )
 
+    print(
+        f"hidden_channels: {hidden_channels}, dropout: {dropout}, lr: {lr}, weight_decay: {weight_decay}",
+        flush=True,
+    )
+
     return trainer.train(epochs=config.training.num_epochs)[0]  # return best val acc
 
 
 def run_optuna(n_trials=50):
-
+    print("Starting hyperparameter optimization with Optuna...", flush=True)
     optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
     study_name = f"trial_optuna"  # Unique identifier of the study. Here we optimize for each test species
     storage_name = "sqlite:///{}.db".format(study_name)
 
-    study = optuna.create_study(direction="maximize",  storage=storage_name, study_name=study_name, load_if_exists=True)
+    print("Running Optuna study...", flush=True)
+    study = optuna.create_study(
+        direction="maximize",
+        storage=storage_name,
+        study_name=study_name,
+        load_if_exists=True,
+    )
     study.optimize(objective, n_trials=n_trials)
 
     # Output the best hyperparameters found
-    print(f"Best trial: {study.best_trial.value}")
-    print(f"Best params: {study.best_trial.params}")
+    print(f"Best trial: {study.best_trial.value}", flush=True)
+    print(f"Best params: {study.best_trial.params}", flush=True)
 
     return study.best_trial
