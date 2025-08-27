@@ -2,8 +2,8 @@ import os
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
-from training.losses import get_loss_fn
-from training.optimizer import build_optimizer
+from CellGraphX.training.losses import get_loss_fn
+from CellGraphX.training.optimizer import build_optimizer
 import logging
 
 
@@ -14,18 +14,29 @@ class Trainer:
         data,
         config,
         scheduler=None,
+        optimizer=None,
         device="cpu",
+        loss_fn=None,
         edge_weight_dict=None,
         log_dir="./logs",
     ):
+
+        # To device is already done here when creating the trainer
+
         self.model = model.to(device)
         self.data = data.to(device)
-        self.optimizer = build_optimizer(model, config.training)
-        self.scheduler = scheduler
+
+        self.optimizer = (
+            optimizer
+            if optimizer is not None
+            else build_optimizer(model, config.training)
+        )  # if given use given, necessary for optuna
+
+        self.scheduler = scheduler  # can be none
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.edge_weight_dict = edge_weight_dict
         self.config = config
-        self.loss_fn = get_loss_fn(config.loss)
+        self.loss_fn = loss_fn if loss_fn is not None else get_loss_fn(config.loss)
         self.log_dir = config.log_dir
 
         # Logging setup
@@ -34,6 +45,7 @@ class Trainer:
         self.logger = logging.getLogger(__name__)
 
         self.best_val_acc = 0.0
+        self.test_acc_at_best_val = 0.0
         self.log_dir = log_dir
 
     def _setup_logger(self, log_dir):
@@ -45,6 +57,7 @@ class Trainer:
         )
 
     def train(self, epochs):
+
         for epoch in range(epochs):
             self.logger.info(f"Epoch {epoch+1}/{epochs}")
             train_loss = self._train_one_epoch()
@@ -60,14 +73,25 @@ class Trainer:
 
             if val_acc > self.best_val_acc:
                 self.best_val_acc = val_acc
-                self._save_checkpoint(epoch, is_best=True)
+                self.test_acc_at_best_val = test_acc
+                self._save_checkpoint(
+                    epoch, is_best=True
+                )  # at this point we think model with best val acc is the best model - up for discussion
+
             self._save_checkpoint(epoch, is_best=False)
+
+        return (
+            self.best_val_acc,
+            self.test_acc_at_best_val,
+        )  # this return is for optuna hyperparam tuning
 
     def _train_one_epoch(self):
         self.model.train()
         self.optimizer.zero_grad()
 
-        out = self.model(self.data.x_dict, self.data.edge_index_dict, self.edge_weight_dict)
+        out = self.model(
+            self.data.x_dict, self.data.edge_index_dict, self.edge_weight_dict
+        )
         mask = self.data["cell_type"].train_mask
         loss = self.loss_fn(
             out[mask], self.data["cell_type"].y[mask]
@@ -85,7 +109,7 @@ class Trainer:
     def _evaluate(self):
         self.model.eval()
         out = self.model(self.data.x_dict, self.data.edge_index_dict)
-        pred = out.argmax(dim=-1) # use argmax to get the predicted class
+        pred = out.argmax(dim=-1)  # use argmax to get the predicted class
 
         accs = []
         for split in ["train_mask", "val_mask", "test_mask"]:

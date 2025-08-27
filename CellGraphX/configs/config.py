@@ -12,7 +12,7 @@ class LossConfig:
 
 class TrainingConfig:
     batch_size = 32
-    num_epochs = 100
+    num_epochs = 10
     optimizer = {"name": "adam", "params": {"lr": 1e-3, "weight_decay": 1e-5}}
 
 
@@ -43,4 +43,4 @@ class Config:
     loss = LossConfig
     training = TrainingConfig
     data = DataConfig
-    log_dir = "../logs"
+    log_dir = "../logs"  # TODO: this make the log dir at the same level to the dir whereever the config is initialised, yuyao see if this requires fixing

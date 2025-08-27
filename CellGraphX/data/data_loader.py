@@ -95,6 +95,7 @@ def load_cell_type_index_mapping(cell_type_index_mapping):
 
 def data_loader(config):
     # print(os.getcwd())
+    print(f"Loading data from {DATA_DIR / config.heterodata_pt} ...", flush=True)
     data_orig = read_pt(
         data_path=DATA_DIR
         / config.heterodata_pt
@@ -102,7 +103,7 @@ def data_loader(config):
         # this will be run from cwd CellGraphX so the paths has "/data/"
     )
     species_origin = load_species_origin_index(
-        cell_type_index_mapping=DATA_DIR / config.species_origin_index
+        species_origin_index=DATA_DIR / config.species_origin_index
     )
     split = {
         "train_idx": np.array(
@@ -130,6 +131,7 @@ def data_loader(config):
             ]
         ),
     }
+    print(f"Split train val and test species", flush=True)
 
     data = split_train_val_test(data_orig, split)
 
@@ -138,6 +140,9 @@ def data_loader(config):
     data.cell_type_index_mapping = load_cell_type_index_mapping(
         cell_type_index_mapping=DATA_DIR / config.cell_type_index_mapping
     )
+
+    data.test_species = config.test_species
+    data.val_species = config.val_species
 
     print(f"This is the HeteroData you are working with:\n{data}")
     return data

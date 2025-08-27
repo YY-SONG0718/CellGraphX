@@ -2,9 +2,8 @@ import os.path as osp
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
-
-
-torch.manual_seed(0)
+import numpy as np
+import pandas as pd
 import random
 
 np.random.seed(0)
@@ -17,24 +16,20 @@ writer = SummaryWriter()
 from sklearn.preprocessing import LabelEncoder
 
 
-import pandas as pd
-import numpy as np
-
-import torch
-import torch.optim as optim
-from training.trainer import Trainer
-from configs.config import Config
-from models.model import model_builder
-from data.data_loader import data_loader, edge_weight_dict_loader
-from training.optimizer import build_optimizer
-
 import seaborn as sns
 from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
-
-
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
+
+
+import torch
+import torch.optim as optim
+from CellGraphX.training.trainer import Trainer
+from CellGraphX.configs.config import Config
+from CellGraphX.models.model import model_builder
+from CellGraphX.data.data_loader import data_loader, edge_weight_dict_loader
+from CellGraphX.training.optimizer import build_optimizer
 
 
 class TSNE_vis:
@@ -58,7 +53,9 @@ class TSNE_vis:
             raise FileNotFoundError(f"No model file found at {self.model_path}")
 
         model.load_state_dict(
-            torch.load(self.model_path, map_location=torch.device("cpu"))
+            torch.load(self.model_path, map_location=torch.device("cpu"))[
+                "model_state_dict"
+            ]
         )
         return model
 
@@ -75,6 +72,8 @@ class TSNE_vis:
             edge_weight_dict=edge_weight_dict,
         )  # forward pass in eval mode
 
+        print("Performing t-SNE ...", flush=True)
+
         tsne = TSNE(n_components=2).fit_transform(out.detach().cpu().numpy())
         return tsne
 
@@ -86,6 +85,8 @@ class TSNE_vis:
         plt.yticks([])
 
         # prepare shapes
+
+        print("Prepare species labels as shapes ...", flush=True)
 
         species_labels = self.species_origin.values()
         species_list = list(species_labels)
@@ -101,7 +102,9 @@ class TSNE_vis:
         unique_shapes = np.unique(shape)
 
         # prepare color palette based on number of cell types
-        color_labels = self.data_orig["cell_type"].y
+
+        print("Prepare cell type labels as colors ...", flush=True)
+        color_labels = self.data["cell_type"].y
         color_labels = np.array(color_labels)
         num_colors = len(np.unique(color_labels))
         palette = sns.color_palette("hls", num_colors)
@@ -157,6 +160,8 @@ class TSNE_vis:
         ]
 
         # Combine the two legends
+
+        print("plotting ...", flush=True)
         legend1 = plt.legend(
             handles=species_handles,
             title="Species (shape)",
@@ -177,7 +182,7 @@ class TSNE_vis:
 
         plt.tight_layout()
         plt.savefig(
-            f"{out_path}/tsne_plot_embed_5_species_ct_name_graphconv.png",
+            f"{out_path}",  # note that this should be a complete image file path, with .png
             dpi=300,
             bbox_inches="tight",
         )

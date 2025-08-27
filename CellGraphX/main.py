@@ -37,6 +37,7 @@ def main():
     trainer = Trainer(
         model=model,
         data=data,
+        optimizer=optimizer,
         scheduler=scheduler,
         config=config,
         edge_weight_dict=edge_weight_dict,
@@ -45,9 +46,14 @@ def main():
 
     # Start the training
     print("Starting training...", flush=True)
-    trainer.train(epochs=config.training.num_epochs)
+
+    best_val_acc, test_acc_at_best_val = trainer.train(
+        epochs=config.training.num_epochs
+    )
 
     print("Training completed with model saved.", flush=True)
+    print(f"Best validation accuracy: {best_val_acc:.4f}", flush=True)
+    print(f"Test accuracy at best validation: {test_acc_at_best_val:.4f}", flush=True)
 
     # t-SNE visualization
     vis = TSNE_vis(model_path=f"{trainer.log_dir}/best.pt", data=data)
