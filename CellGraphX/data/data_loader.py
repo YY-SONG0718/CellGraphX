@@ -26,6 +26,8 @@ def split_train_val_test(data, split):
 
     # Now since i want to train on human and test on pt, i need to create the train val test split
     for name in ["train", "val", "test"]:
+        if name + "_idx" not in split:
+            continue
         idx = split[f"{name}_idx"]
         idx = torch.from_numpy(idx).to(torch.long)
         mask = torch.zeros(data["cell_type"].num_nodes, dtype=torch.bool)
@@ -165,3 +167,28 @@ def edge_weight_dict_loader(data):
     }
 
     return edge_weight_dict
+
+
+# load data, but do not split train val test here for leave-one-out CV situations:
+
+def data_loader_no_split(config):
+    # print(os.getcwd())
+    print(f"Loading data from {DATA_DIR / config.heterodata_pt} ...", flush=True)
+    data = read_pt(
+        data_path=DATA_DIR
+        / config.heterodata_pt
+        # this is the heterodata pt file
+        # this will be run from cwd CellGraphX so the paths has "/data/"
+    )
+    species_origin = load_species_origin_index(
+        species_origin_index=DATA_DIR / config.species_origin_index
+    )
+
+    # add useful metadata to the data object
+    data.species_origin_index = species_origin
+    data.cell_type_index_mapping = load_cell_type_index_mapping(
+        cell_type_index_mapping=DATA_DIR / config.cell_type_index_mapping
+    )
+
+    print(f"This is the HeteroData you are working with:\n{data}")
+    return data

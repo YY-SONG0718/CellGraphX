@@ -14,10 +14,11 @@ def objective(trial):
     config = Config()
     # params to optimise
 
-    hidden_channels = trial.suggest_int("hidden_channels", 16, 128)
-    dropout = trial.suggest_float("dropout", 0.1, 0.6)
-    lr = trial.suggest_float("lr", 1e-4, 1e-2, log=True)
-    weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-2, log=True)
+    hidden_channels = trial.suggest_categorical("hidden_dim", [64, 128, 256])
+    dropout = trial.suggest_float("dropout", 0.1, 0.5)
+    lr = trial.suggest_float("lr", 1e-5, 1e-3, log=True)
+    weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3, log=True)
+    
     # initialize the model manually because we changed the hyper params
 
     print("Initializing model...", flush=True)

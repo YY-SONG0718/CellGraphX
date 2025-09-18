@@ -34,6 +34,13 @@ class DataConfig:
     species_origin_index = "mtg_all_sp_wilcox_data_with_og.pkl"  # this is the species origin of each cell type node
     val_species = "M.mulatta"
     test_species = "G.gorilla"
+    all_species = [
+        "H.sapiens",
+        "P.troglodytes",
+        "M.mulatta",
+        "G.gorilla",
+        "C.jacchus",
+    ]  # all species in data, for leave-one-out CV
 
     cell_type_index_mapping = "mtg_all_sp_wilcox_data_ct_y_mapping.pkl"  # this is the mapping between cell type index (a number, essentially) and cell type name
 
