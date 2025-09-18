@@ -51,6 +51,8 @@ def objective(trial):
 
     for val_species in config.data.all_species:
 
+        print(f"Leave one out CV, val species at the moment is: {val_species}", flush=True)
+
         split = {
             "train_idx": np.array(
                 [
@@ -86,6 +88,8 @@ def objective(trial):
         )
 
         val_acc = trainer.train(epochs=config.training.num_epochs)[0]
+
+        print(f"Val acc for species {val_species}: {val_acc}", flush=True)      
 
     val_scores.append(val_acc)
     # return simple mean of each val species acc
