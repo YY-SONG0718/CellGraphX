@@ -1,4 +1,5 @@
 import optuna
+from optuna.trial import TrialState
 import torch
 import torch.optim as optim
 from CellGraphX.models.model import HeteroGNN
@@ -47,7 +48,7 @@ def objective(trial):
 
     species_origin = data_no_split.species_origin_index
 
-    val_scores = []
+    val_scores = []  # empty score per trial
 
     for val_species in config.data.all_species:
 
@@ -101,6 +102,8 @@ def objective(trial):
 
     val_scores.append(val_acc)
     # return simple mean of each val species acc
+    if trial.should_prune():
+        raise optuna.exceptions.TrialPruned()
 
     return float(np.mean(val_scores))
 
@@ -124,7 +127,22 @@ def run_optuna(n_trials=50):
     study.optimize(objective, n_trials=n_trials)
 
     # Output the best hyperparameters found
-    print(f"Best trial: {study.best_trial.value}", flush=True)
-    print(f"Best params: {study.best_trial.params}", flush=True)
+
+    pruned_trials = study.get_trials(deepcopy=False, states=[TrialState.PRUNED])
+    complete_trials = study.get_trials(deepcopy=False, states=[TrialState.COMPLETE])
+
+    print("Study statistics: ")
+    print("  Number of finished trials: ", len(study.trials), flush=True)
+    print("  Number of pruned trials: ", len(pruned_trials), flush=True)
+    print("  Number of complete trials: ", len(complete_trials), flush=True)
+
+    print("Best trial:", flush=True)
+    trial = study.best_trial
+    
+    print("  Value: ", trial.value, flush=True)
+
+    print("  Params: ")
+    for key, value in trial.params.items():
+        print("    {}: {}".format(key, value), flush=True)
 
     return study.best_trial
