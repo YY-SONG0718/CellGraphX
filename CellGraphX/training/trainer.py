@@ -33,11 +33,13 @@ class Trainer:
         )  # if given use given, necessary for optuna
 
         self.scheduler = scheduler  # can be none
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"
+        )  # automatically use GPU if available
+        print(f"Using device: {self.device}", flush=True)
         self.edge_weight_dict = edge_weight_dict
         self.config = config
         self.loss_fn = loss_fn if loss_fn is not None else get_loss_fn(config.loss)
-
 
         # Logging setup
         os.makedirs(log_dir, exist_ok=True)

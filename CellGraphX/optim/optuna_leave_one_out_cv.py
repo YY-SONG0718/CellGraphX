@@ -20,9 +20,9 @@ def objective(trial):
     # params to optimise
 
     hidden_channels = trial.suggest_categorical("hidden_dim", [64, 128, 256])
-    dropout = trial.suggest_float("dropout", 0.1, 0.5)
-    lr = trial.suggest_float("lr", 1e-5, 1e-2, log=True)
-    weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3, log=True)
+    dropout = trial.suggest_float("dropout", 0.1, 0.3)
+    lr = trial.suggest_float("lr", 1e-4, 1e-2, log=True)
+    weight_decay = trial.suggest_float("weight_decay", 1e-5, 1e-3, log=True)
 
     # initialize the model manually because we changed the hyper params
 
@@ -51,7 +51,9 @@ def objective(trial):
 
     for val_species in config.data.all_species:
 
-        print(f"Leave one out CV, val species at the moment is: {val_species}", flush=True)
+        print(
+            f"Leave one out CV, val species at the moment is: {val_species}", flush=True
+        )
 
         split = {
             "train_idx": np.array(
@@ -63,6 +65,12 @@ def objective(trial):
             ),
             "val_idx": np.array(
                 [k for k in species_origin.keys() if species_origin[k] == val_species]
+            ),
+            "test_idx": np.array(
+                [
+                    k for k in species_origin.keys() if species_origin[k] == val_species
+                ]  ### this is more of a placeholder so the training codes function properly
+                # there is certainly no actual test set in this leave-one-out CV
             ),
         }
         print(f"Split train val and test species", flush=True)
@@ -89,7 +97,7 @@ def objective(trial):
 
         val_acc = trainer.train(epochs=config.training.num_epochs)[0]
 
-        print(f"Val acc for species {val_species}: {val_acc}", flush=True)      
+        print(f"Val acc for species {val_species}: {val_acc}", flush=True)
 
     val_scores.append(val_acc)
     # return simple mean of each val species acc
